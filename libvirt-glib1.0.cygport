@@ -1,0 +1,43 @@
+inherit python gnome2
+
+NAME="libvirt-glib1.0"
+VERSION=0.2.3
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="GObject bindings of libvirt"
+DESCRIPTION="libvirt is a C toolkit to interact with the virtualization
+capabilities of recent versions of Linux (and other OSes)."
+HOMEPAGE="http://libvirt.org/"
+SRC_URI="ftp://libvirt.org/libvirt/glib/libvirt-glib-${VERSION}.tar.gz"
+SRC_DIR="libvirt-glib-${VERSION}"
+PATCH_URI="0.2.3-python-ldadd.patch"
+
+PKG_NAMES="${NAME}_0 ${NAME}-devel ${NAME}-doc girepository-LibvirtGLib1.0 python-libvirtglib vala-${NAME}"
+libvirt_glib1_0_0_CONTENTS="
+	usr/bin/cygvirt-g*-1.0-0.dll
+	usr/share/doc/${NAME}/
+	usr/share/locale/*/LC_MESSAGES/libvirt-glib.mo
+"
+libvirt_glib1_0_devel_CONTENTS="
+	usr/include/libvirt-g*-1.0/
+	usr/lib/libvirt-g*-1.0.dll.a
+	usr/lib/pkgconfig/libvirt-g*-1.0.pc
+"
+libvirt_glib1_0_doc_CONTENTS="usr/share/gtk-doc/html/Libvirt-g*/"
+girepository_LibvirtGLib1_0_CONTENTS="usr/*/gir*-1.0/LibvirtG*-1.0.*"
+python_libvirtglib_CONTENTS="
+	usr/lib/python2.7/site-packages/libvirtglibmod.dll
+	usr/lib/python2.7/site-packages/libvirtglib.py*
+"
+vala_libvirt_glib1_0_CONTENTS="usr/share/vala/vapi/libvirt-g*-1.0.*"
+
+export PYTHON_VERSION
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	mv ${D}${PYTHON_SITELIB}/{cyg,lib}virtglibmod.dll
+	sed -i -e "s|cygvirtglibmod|libvirtglibmod|g" ${D}${PYTHON_SITELIB}/libvirtglibmod.la
+	python_optimize
+}
